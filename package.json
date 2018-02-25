@@ -1,0 +1,24 @@
+{
+  "name": "my-first-git-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smithdanielr92/my-first-git-project.git"
+  },
+  "author": "DANIEL~",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smithdanielr92/my-first-git-project/issues"
+  },
+  "homepage": "https://github.com/smithdanielr92/my-first-git-project#readme"
+}
