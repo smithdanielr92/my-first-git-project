@@ -1,12 +1,11 @@
 const rp = require("request-promise");
 const options = {
     method: "GET",
-    url: "https://us.api.battle.net/wow/character/stormrage/Busy?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
+    url: "https://us.api.battle.net/wow/character/stormrage/Aeronautics?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
 };
 rp(options)
 .then(data => {
     const stats = JSON.parse(data);
-
     let kd = {};
     kd.kills = {};
     kd.deaths = {};
@@ -16,6 +15,8 @@ rp(options)
     let bgIndex = 0;
     let totalKills = 0;
     let totalDeaths = 0;
+
+    console.log("PvP statistics for " + stats.name + " on " + stats.realm); 
     while(bgIndex < bgs.length) {
         if(killIndex === 14) {
             killIndex ++; // Skip Isle of Conquest kills
