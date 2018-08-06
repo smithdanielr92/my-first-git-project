@@ -1,5 +1,5 @@
 {
-  "name": "my-first-git-project",
+  "name": "wow-character-search",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smithdanielr92/my-first-git-project.git"
+    "url": "git+https://github.com/smithdanielr92/wow-character-search.git"
   },
   "author": "DANIEL~",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/smithdanielr92/my-first-git-project/issues"
+    "url": "https://github.com/smithdanielr92/wow-character-search/issues"
   },
-  "homepage": "https://github.com/smithdanielr92/my-first-git-project#readme"
+  "homepage": "https://github.com/smithdanielr92/wow-character-search#readme"
 }
