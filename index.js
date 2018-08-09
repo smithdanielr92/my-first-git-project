@@ -105,7 +105,7 @@ rp(options).then(data => {
     console.log("TOTAL KILLS: " + totalKills);
     console.log("TOTAL DEATHS: " + totalDeaths);
     console.log("RATIO: " + totalRatio);
-
+    console.log();
     let arenaWins = stats.statistics.subCategories[9].subCategories[0].statistics[0].quantity;
     let arenasPlayed = stats.statistics.subCategories[9].subCategories[0].statistics[1].quantity;
     let arenaWL = (arenasPlayed !== 0) ? (arenaWins / arenasPlayed).toFixed(3) : "N/A";
