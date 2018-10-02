@@ -3,20 +3,27 @@
 <head>
     <title>WoW Character Search</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <h1 class="text-center">World of Warcraft PvP Character Search</h1>
     <div class="container text-center">
         <h5>Character Name:</h5>
-        <input />
+        <input id="name" />
         <h5>Realm Name:</h5>
-        <input />
+        <input id="realm" />
         <h5>Region:</h5>
-        <select></select>
+        <div class="row">
+            <select id="regionSelect">
+                <option value="us">US</option>
+                <option value="eu">EU</option>
+            </select>
+        </div>
 
-        <button class="btn btn-info">Search</button>
+        <button class="btn btn-info submit-button" onclick="getCharacterInfo()">Search</button>
     </div>
 </body>
 
