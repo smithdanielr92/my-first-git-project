@@ -1,8 +1,13 @@
 const {getCharacterInfo} = require('./index');
+const {getRealms} = require('./index');
 const express = require('express');
 const app = express();
 const path = require('path');
-const PORT = 3000
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 6003;
+}
 
 app.get('/', (req, res) => {
     const filePath = path.join(__dirname + '/index.html');
@@ -16,4 +21,4 @@ app.get('/characterSearch', async (req, res) => {
     return res.send(info);
 });
 
-app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
+app.listen(port, () => console.log(`app listening on port ${port}!`))
