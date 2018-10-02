@@ -1,8 +1,32 @@
 const rp = require("request-promise");
 const options = {
     method: "GET",
-    url: "https://us.api.battle.net/wow/character/stormrage/Busy?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
+    url: "https://us.api.battle.net/wow/character/stormrage/busy?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
 };
+
+const realmsQuery = {
+    method: "GET",
+    url: "https://us.api.battle.net/wow/realm/status?locale=en_US&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
+}
+
+async function getCharacterInfo(name="") {
+    const realmStatus = await rp(realmsQuery);
+    const realms = JSON.parse(realmStatus).realms;
+
+    if(name) {
+        return realms.filter(realm => realm.name === name);
+    }
+    
+    return realms.map(realm => realm.slug);
+
+    // return rp(realms).then(data => {
+    //     let realmList = JSON.parse(data).realms;
+    //     return realmList;
+    //     realmList.forEach(realm => {
+    //         console.log(realm.name);
+    //     });
+    // });
+}
 
 function getBgs(stats) {
     let bgInfo = {};
@@ -57,9 +81,11 @@ function getBgs(stats) {
     return bgInfo;
 }
 
+
+
 rp(options).then(data => {
     const stats = JSON.parse(data);
-    
+
     let bgsPlayed = stats.statistics.subCategories[9].subCategories[1].statistics[0].quantity;
     let bgsWon = stats.statistics.subCategories[9].subCategories[1].statistics[2].quantity;
     let killIndex = 9;
@@ -67,7 +93,7 @@ rp(options).then(data => {
     let bgs = ["Alterac Valley", "Arathi Basin", "Warsong Gulch", "Eye of the Storm", "Strand of the Ancients", "Twin Peaks", "The Battle for Gilneas", "Silvershard Mines", "Temple of Kotmogu", "Deepwind Gorge"];
     let abbreviations = ["av", "ab", "wsg", "eots", "sota", "tp", "bfg", "sm", "tok", "dwg"];
     let bgInfo = getBgs(stats);
-    
+
 
     let bgIndex = 0;
     let totalKills = 0;
@@ -151,3 +177,6 @@ rp(options).then(data => {
 });
 
 
+module.exports = {
+    getCharacterInfo: getCharacterInfo
+};
