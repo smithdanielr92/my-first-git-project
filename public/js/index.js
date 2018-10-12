@@ -20,7 +20,7 @@ async function getRealms(region="en-US") {
     return realms.map(realm => realm.slug);
 }
 
-async function getCharacterInfo(name="", realm, region) {
+async function getCharacterInfo(region, realm, name) {
     const characterQuery = {
         method: "GET",
         url: "https://" + region + ".api.battle.net/wow/character/" + realm + "/" + name + "?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
@@ -53,9 +53,9 @@ async function getCharacterInfo(name="", realm, region) {
         
         data.bgInfo[abbreviations[bgIndex]].kills = kills;
         data.bgInfo[abbreviations[bgIndex]].deaths = deaths;
-        data.bgInfo[abbreviations[bgIndex]].ratio = (bgKill !== 0 || bgDeath !== 0) ? (bgKill / bgDeath).toFixed(2) : "N/A";
+        data.bgInfo[abbreviations[bgIndex]].ratio = (kills !== 0 || deaths !== 0) ? (kills / deaths).toFixed(2) : "N/A";
 
-        let played = bgInfo[abbreviations[bgIndex]].played;
+        let played = data.bgInfo[abbreviations[bgIndex]].played;
         data.bgInfo[abbreviations[bgIndex]].avgKillsPerGame = (kills / played).toFixed(2);
         data.bgInfo[abbreviations[bgIndex]].avgDeathsPerGame = (deaths / played).toFixed(2);
         
@@ -63,30 +63,31 @@ async function getCharacterInfo(name="", realm, region) {
         deathIndex++;
         bgIndex++;
     }
-    data.totalRatio = (totalKills !== 0 || totalDeaths !== 0) ? (totalKills / totalDeaths).toFixed(2) : "N/A";
+    data.totalRatio = (data.totalKills !== 0 || data.totalDeaths !== 0) ? (data.totalKills / data.totalDeaths).toFixed(2) : "N/A";
     data.bgWinRate = (Number.parseFloat((data.bgsWon / data.bgsPlayed).toFixed(4)) * 100);
 
+    //TODO: outsource win% to a method
     data.arenaWins = stats.statistics.subCategories[9].subCategories[0].statistics[0].quantity;
     data.arenasPlayed = stats.statistics.subCategories[9].subCategories[0].statistics[1].quantity;
-    data.arenaWL = (arenasPlayed !== 0) ? (arenaWins / arenasPlayed).toFixed(3) : "N/A";
+    data.arenaWL = (data.arenasPlayed !== 0) ? (data.arenaWins / data.arenasPlayed).toFixed(3) : "N/A";
     data.twosWins = stats.statistics.subCategories[9].subCategories[0].statistics[7].quantity;
     data.twosPlayed = stats.statistics.subCategories[9].subCategories[0].statistics[6].quantity;
-    data.twosWL = (twosPlayed !== 0) ? (twosWins / twosPlayed).toFixed(3) : "N/A";
+    data.twosWL = (data.twosPlayed !== 0) ? (data.twosWins / data.twosPlayed).toFixed(3) : "N/A";
     data.twosRating = stats.statistics.subCategories[9].subCategories[0].statistics[24].quantity;
     data.threesWins = stats.statistics.subCategories[9].subCategories[0].statistics[5].quantity;
     data.threesPlayed = stats.statistics.subCategories[9].subCategories[0].statistics[4].quantity;
-    data.threesWL = (threesPlayed !== 0) ? (threesWins / threesPlayed).toFixed(3) : "N/A";
+    data.threesWL = (data.threesPlayed !== 0) ? (data.threesWins / data.threesPlayed).toFixed(3) : "N/A";
     data.threesRating = stats.statistics.subCategories[9].subCategories[0].statistics[23].quantity;
     data.fivesWins = stats.statistics.subCategories[9].subCategories[0].statistics[3].quantity;
     data.fivesPlayed = stats.statistics.subCategories[9].subCategories[0].statistics[2].quantity;
-    data.fivesWL = (fivesPlayed !== 0) ? (fivesWins / fivesPlayed).toFixed(3) : "N/A";
+    data.fivesWL = (data.fivesPlayed !== 0) ? (data.fivesWins / data.fivesPlayed).toFixed(3) : "N/A";
     data.fivesRating = stats.statistics.subCategories[9].subCategories[0].statistics[22].quantity;
 
     data.duelsWon = stats.statistics.subCategories[9].subCategories[2].statistics[0].quantity
     data.duelsLost = stats.statistics.subCategories[9].subCategories[2].statistics[1].quantity
-    data.duelWL = (duelsWon !== 0 || duelsLost !== 0) ? Number.parseFloat(duelsWon / (duelsWon + duelsLost)).toFixed(4) * 100 : "N.A";
+    data.duelWL = (data.duelsWon !== 0 || data.duelsLost !== 0) ? Number.parseFloat(data.duelsWon / (data.duelsWon + data.duelsLost)).toFixed(4) * 100 : "N.A";
 
-    consol.log(data);
+    return data;
 }
 
 function getBgs(stats) {

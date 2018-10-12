@@ -15,9 +15,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/characterSearch', async (req, res) => {
-    const name = req.query.name || "";
+    const region = req.query.region || "us";
+    const realm = req.query.realm || "Stormrage";
+    const name = req.query.name || "Busy";
 
-    const info = await getCharacterInfo(name);
+    const info = await getCharacterInfo(region, realm, name);
     return res.send(info);
 });
 

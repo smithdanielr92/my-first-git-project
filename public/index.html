@@ -28,8 +28,21 @@
             </select>
         </div>
 
-        <button class="btn btn-info submit-button" onclick="getCharacterInfo()">Search</button>
+        <button class="btn btn-info submit-button" onclick="characterSearch('us', 'stormrage', 'busy')">Search</button>
     </div>
+    <script>
+        function getRequest(url) {
+
+            return fetch(url, {
+                method: "GET",
+            }).then(data => data.json());
+        }
+        
+        function characterSearch(region, realm, name) {
+            const url = "http://localhost:6003/characterSearch?region=" + region + "&realm=" + realm + "&name=" + name;
+            getRequest(url).then(console.log);
+        }
+    </script>
 </body>
 
 </html>
