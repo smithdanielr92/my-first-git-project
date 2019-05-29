@@ -1,12 +1,12 @@
 const rp = require("request-promise");
 const characterQuery = {
     method: "GET",
-    url: "https://us.api.battle.net/wow/character/stormrage/busy?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
+    url: "https://us.api.battle.net/wow/character/stormrage/busy?locale=en_US&fields=statistics&apikey=cLsAFydBdDN8zH0c38fH06mbuS54CuXC"
 };
 
 const realmsQuery = {
     method: "GET",
-    url: "https://us.api.battle.net/wow/realm/status?locale=en_US&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
+    url: "https://us.api.battle.net/wow/realm/status?locale=en_US&apikey=cLsAFydBdDN8zH0c38fH06mbuS54CuXC"
 }
 
 async function getRealms(region="en-US") {
@@ -23,21 +23,21 @@ async function getRealms(region="en-US") {
 async function getCharacterInfo(region, realm, name) {
     const characterQuery = {
         method: "GET",
-        url: "https://" + region + ".api.battle.net/wow/character/" + realm + "/" + name + "?locale=en_US&fields=statistics&apikey=4zhp9gcunyhhedfye3bcypg698chch9j"
-    };
-    const statistics = await rp(characterQuery)
-    const stats = JSON.parse(statistics);
+        url: "https://us.api.blizzard.com/wow/character/stormrage/Busy?fields=statistics&locale=en_US&access_token=USu8VQ7mz1tRUCApgOy9y7NBAdTdZnqws5"
 
-    let data = {name: stats.name, realm: stats.realm};
+    };
+    let stats = await rp(characterQuery)
+    stats = JSON.parse(stats);
+
+    let data = { name: stats.name, realm: stats.realm, avatar: "https://render-us.worldofwarcraft.com/character/" + stats.thumbnail};
     data.bgsPlayed = stats.statistics.subCategories[9].subCategories[1].statistics[0].quantity;
     data.bgsWon = stats.statistics.subCategories[9].subCategories[1].statistics[2].quantity;
     let killIndex = 9;
     let deathIndex = 0;
     let bgs = ["Alterac Valley", "Arathi Basin", "Warsong Gulch", "Eye of the Storm", "Strand of the Ancients", "Twin Peaks", "The Battle for Gilneas", "Silvershard Mines", "Temple of Kotmogu", "Deepwind Gorge"];
-    let abbreviations = ["av", "ab", "wsg", "eots", "sota", "tp", "bfg", "sm", "tok", "dwg"];
     data.bgInfo = getBgs(stats);
-
-    
+    console.log(data.bgInfo);
+    let index = 0;
     let bgIndex = 0;
     data.totalKills = 0;
     data.totalDeaths = 0;
@@ -50,21 +50,22 @@ async function getCharacterInfo(region, realm, name) {
 
         data.totalKills += kills;
         data.totalDeaths += deaths;
-        
-        data.bgInfo[abbreviations[bgIndex]].kills = kills;
-        data.bgInfo[abbreviations[bgIndex]].deaths = deaths;
-        data.bgInfo[abbreviations[bgIndex]].ratio = (kills !== 0 || deaths !== 0) ? (kills / deaths).toFixed(2) : "N/A";
 
-        let played = data.bgInfo[abbreviations[bgIndex]].played;
-        data.bgInfo[abbreviations[bgIndex]].avgKillsPerGame = (kills / played).toFixed(2);
-        data.bgInfo[abbreviations[bgIndex]].avgDeathsPerGame = (deaths / played).toFixed(2);
-        
+        data.bgInfo[index].kills = kills;
+        data.bgInfo[index].deaths = deaths;
+        data.bgInfo[index].ratio = (kills !== 0 || deaths !== 0) ? (kills / deaths).toFixed(2) : "N/A";
+
+        let played = data.bgInfo[index].played;
+        data.bgInfo[index].avgKillsPerGame = (kills / played).toFixed(2);
+        data.bgInfo[index].avgDeathsPerGame = (deaths / played).toFixed(2);
+
         killIndex++;
         deathIndex++;
         bgIndex++;
+        index++;
     }
     data.totalRatio = (data.totalKills !== 0 || data.totalDeaths !== 0) ? (data.totalKills / data.totalDeaths).toFixed(2) : "N/A";
-    data.bgWinRate = (Number.parseFloat((data.bgsWon / data.bgsPlayed).toFixed(4)) * 100);
+    data.bgWinRate = (Number.parseFloat((data.bgsWon / data.bgsPlayed)) * 100).toFixed(2);
 
     //TODO: outsource win% to a method
     data.arenaWins = stats.statistics.subCategories[9].subCategories[0].statistics[0].quantity;
@@ -90,56 +91,69 @@ async function getCharacterInfo(region, realm, name) {
     return data;
 }
 
+
+
 function getBgs(stats) {
-    let bgInfo = {};
-    bgInfo.av = {
+    let bgInfo = [];
+    bgInfo.push({
+        name: "Alterac Valley",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[4].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[5].quantity
-    };
-    bgInfo.ab = {
+    });
+    bgInfo.push({
+        name: "Arathi Basic",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[6].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[7].quantity
-    }
-    bgInfo.bfg = {
+    });
+    bgInfo.push({
+        name: "The Battle For Gilneas",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[8].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[9].quantity
-    }
-    bgInfo.eots = {
+    });
+    bgInfo.push({
+        name: "Eye of the Storm",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[10].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[12].quantity
-    }
-    bgInfo.ss = {
-        played: stats.statistics.subCategories[9].subCategories[1].statistics[13].quantity,
-        won: stats.statistics.subCategories[9].subCategories[1].statistics[14].quantity
-    }
-    bgInfo.sota = {
+    });
+    // bgInfo.ss = {
+    //     played: stats.statistics.subCategories[9].subCategories[1].statistics[13].quantity,
+    //     won: stats.statistics.subCategories[9].subCategories[1].statistics[14].quantity
+    // }
+    bgInfo.push({
+        name: "Strand of the Ancients",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[15].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[16].quantity
-    }
-    bgInfo.tp = {
+    });
+    bgInfo.push({
+        name: "Twin Peaks",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[17].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[18].quantity
-    }
-    bgInfo.wsg = {
+    });
+    bgInfo.push({
+        name: "Warsong Gulch",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[19].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[20].quantity
-    }
-    bgInfo.sm = {
+    });
+    bgInfo.push({
+        name: "Silvershard Mines",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[21].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[22].quantity
-    }
-    bgInfo.tok = {
+    });
+    bgInfo.push({
+        name: "Temple of Kotmogu",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[23].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[24].quantity
-    }
-    bgInfo.ioc = {
+    });
+    bgInfo.push({
+        name: "Isle of Conquest",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[25].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[26].quantity
-    }
-    bgInfo.dwg = {
+    });
+    bgInfo.push({
+        name: "Deepwind Gorge",
         played: stats.statistics.subCategories[9].subCategories[1].statistics[28].quantity,
         won: stats.statistics.subCategories[9].subCategories[1].statistics[27].quantity
-    }
+    })
     return bgInfo;
 }
 
@@ -238,6 +252,10 @@ function getBgs(stats) {
 //     console.log("Duel Win Percentage: " + duelWL + "%");
 // });
 
+getCharacterInfo("en_US", "stormrage", "busy").then(
+    data => console.log(data),
+    err => console.log(err)
+);
 
 module.exports = {
     getRealms: getRealms,
